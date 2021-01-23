@@ -1,0 +1,9 @@
+[package]
+name = "plotwav"
+version = "0.1.0"
+authors = ["Cédric Barreteau <cbarrete@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
+screech = { git = "https://github.com/cbarrete/screech" }
+plotters = "0.3.0"
