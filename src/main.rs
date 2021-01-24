@@ -30,7 +30,7 @@ fn main() {
         .get(4)
         .map(|l| l.parse::<usize>().unwrap())
         .map(|l| std::cmp::min(start + l, samples_per_channel))
-        .unwrap_or(samples_per_channel - start);
+        .unwrap_or(samples_per_channel);
 
     let root = BitMapBackend::new(output_file, (1000, 1000)).into_drawing_area();
     root.fill(&WHITE).unwrap();
