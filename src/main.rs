@@ -34,6 +34,7 @@ fn main() {
 
     let root = BitMapBackend::new(output_file, (1000, 1000)).into_drawing_area();
     root.fill(&WHITE).unwrap();
+    root.titled(&format!("{}, start={}, end={}", input_file, start, end), ("sans-serif", 20).into_font()).unwrap();
 
     let drawing_areas = root.split_evenly((channels, 1));
     for (area, channel) in drawing_areas.into_iter().zip(0..) {
