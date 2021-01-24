@@ -13,24 +13,25 @@ fn main() {
     let output_file = args.get(2).map(|s| s.as_ref()).unwrap_or("out.png");
 
     let audio_buffer = read_wav(&mut File::open(input_file).unwrap()).unwrap();
+    let channels = audio_buffer.metadata.channels as usize;
+    let samples_per_channel = audio_buffer.data.len() / channels;
 
     let root = BitMapBackend::new(output_file, (1000, 1000)).into_drawing_area();
     root.fill(&WHITE).unwrap();
     let mut chart = ChartBuilder::on(&root)
         .y_label_area_size(40)
-        .build_cartesian_2d(0f32..audio_buffer.data.len() as f32, -1.1f32..1.1f32)
+        .build_cartesian_2d(0f32..samples_per_channel as f32, -1.1f32..1.1f32)
         .unwrap();
     chart
         .configure_mesh()
         .draw()
         .unwrap();
 
-    let data = audio_buffer
-        .data
-        .iter()
-        .enumerate()
-        .map(|(x, y)| (x as f32, y.clone()))
-        .collect::<Vec<(f32, f32)>>();
+    let mut data = vec![(0., 0.); samples_per_channel];
+    for i in 0..samples_per_channel {
+        data[i] = (i as f32, audio_buffer.data[i * channels]);
+    }
+
     let series = LineSeries::new(data, &RED);
     chart.draw_series(series).unwrap();
 }
