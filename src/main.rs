@@ -18,20 +18,24 @@ fn main() {
 
     let root = BitMapBackend::new(output_file, (1000, 1000)).into_drawing_area();
     root.fill(&WHITE).unwrap();
-    let mut chart = ChartBuilder::on(&root)
-        .y_label_area_size(40)
-        .build_cartesian_2d(0f32..samples_per_channel as f32, -1.1f32..1.1f32)
-        .unwrap();
-    chart
-        .configure_mesh()
-        .draw()
-        .unwrap();
 
-    let mut data = vec![(0., 0.); samples_per_channel];
-    for i in 0..samples_per_channel {
-        data[i] = (i as f32, audio_buffer.data[i * channels]);
+    let drawing_areas = root.split_evenly((channels, 1));
+    for (area, channel) in drawing_areas.into_iter().zip(0..) {
+        let mut chart = ChartBuilder::on(&area)
+            .y_label_area_size(40)
+            .build_cartesian_2d(0f32..samples_per_channel as f32, -1.1f32..1.1f32)
+            .unwrap();
+        chart
+            .configure_mesh()
+            .draw()
+            .unwrap();
+
+        let mut data = vec![(0., 0.); samples_per_channel];
+        for i in 0..samples_per_channel {
+            data[i] = (i as f32, audio_buffer.data[channel + i * channels]);
+        }
+
+        let series = LineSeries::new(data, &RED);
+        chart.draw_series(series).unwrap();
     }
-
-    let series = LineSeries::new(data, &RED);
-    chart.draw_series(series).unwrap();
 }
